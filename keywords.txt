@@ -1,0 +1,8 @@
+# Objects
+keymouse_play	KEYWORD1
+
+# Common Functions
+keymouse_play	KEYWORD2
+start	KEYWORD2
+key_find	KEYWORD2
+print_key_find	KEYWORD2
