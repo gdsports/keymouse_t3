@@ -26,12 +26,14 @@
 #include "keynames.h"
 #include "keymouse_play.h"
 
+#define WHITESPACE " \t\n\r\f"
+
 int keymouse_play::start(const char *keyseq)
 {
   if (!keyseq_done) return 0;
   strncpy(keysequence, keyseq, sizeof(keysequence)-1);
   keysequence[sizeof(keysequence)-1] = '\0';
-  char *tok = strtok(keysequence, " \t");
+  char *tok = strtok(keysequence, WHITESPACE);
   return keyseq_done = keyseq_handle(tok);
 }
 
@@ -43,7 +45,7 @@ int keymouse_play::loop(void)
   }
   keyseq_delay = 0;
 
-  char *tok = strtok(NULL, " \t");
+  char *tok = strtok(NULL, WHITESPACE);
   return keyseq_done = keyseq_handle(tok);
 }
 
