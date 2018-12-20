@@ -23,15 +23,18 @@ SPACE -- This appends a SPACE character to the command.
 
 ENTER -- This is equivalent to pressing the keyboard Enter key.
 
-The key names are listed in keynames.h.
-
 For Linux, change GUI-KEY_R to ALT-F2.
+
+The key and mouse names are listed in keynames.h.
+
+Examples
+* "CTRL-MOUSE_LEFT" -- Control left mouse click.
+* "+CTRL MOUSE_LEFT -CTRL" -- Same as above but requires more typing.
+* "+CTRL ~1 MOUSE_LEFT ~1 -CTRL" -- Add 10 ms delay around left mouse click.
+  The '+' prefix means press and hold the key down. The '-' prefix means
+  release the key.
 
 WARNING: Strings with embedded spaces are not currently supported. For example,
 the string 'chrome https://www.google.com/' does not work because it has an
 embedded space between 'chrome' and the URL. See the above example for how to
 handle this.
-
-## TBD
-
-* USB mouse output.

@@ -77,8 +77,14 @@ int keymouse_play::print_key_find(const char *keyname)
   if (key_elem) {
     Serial.printf("= key_name %s key_num 0x%x\n",
         key_elem->key_name, key_elem->key_num);
-    Keyboard.press(key_elem->key_num);
-    Keyboard.release(key_elem->key_num);
+	if (memcmp("MOUSE_", keyname, 6) == 0) {
+		Mouse.press(key_elem->key_num);
+		Mouse.release(key_elem->key_num);
+	}
+	else {
+		Keyboard.press(key_elem->key_num);
+		Keyboard.release(key_elem->key_num);
+	}
     return 1;
   }
   else {
@@ -98,6 +104,34 @@ int keymouse_play::keyseq_handle(char *token)
   }
   else if (*token == '~') {
     keyseq_delay = millis() + 10*strtoul(token+1, NULL, 10);
+  }
+  else if (*token == '+') {
+    KEY_NAME_NUM_t *key_elem;
+    key_elem = key_find(token+1);
+    if (key_elem) {
+      if (memcmp("MOUSE_", token+1, 6) == 0) {
+        Serial.printf("mouse press %s\n", token+1);
+        Mouse.press(key_elem->key_num);
+      }
+      else {
+        Serial.printf("key press %s\n", token+1);
+        Keyboard.press(key_elem->key_num);
+      }
+    }
+  }
+  else if (*token == '-') {
+    KEY_NAME_NUM_t *key_elem;
+    key_elem = key_find(token+1);
+    if (key_elem) {
+      if (memcmp("MOUSE_", token+1, 6) == 0) {
+        Serial.printf("mouse release %s\n", token+1);
+        Mouse.release(key_elem->key_num);
+      }
+      else {
+        Serial.printf("key release %s\n", token+1);
+        Keyboard.release(key_elem->key_num);
+      }
+    }
   }
   else if (print_key_find(token)) {
   }
