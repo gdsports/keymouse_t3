@@ -1,6 +1,11 @@
-# Key and Mouse Playback for Teensy 3/LC
+# Key and Mouse Playback
 
-Play USB keyboard and USB mouse output from an ASCII string.
+This library was designed for use with Teensy 3/LC but now works with Arduino
+and Arduino compatible boards. An example is included for the Adafruit Circuit
+Playground Express M0.
+
+Play USB keyboard and USB mouse output from an ASCII string. This can be used
+launch applications using a button press or cap touch.
 
 Example: The following string launches the Chrome browser to Google using
 Windows.
