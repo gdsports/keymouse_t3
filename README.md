@@ -7,6 +7,8 @@ Playground Express M0.
 Play USB keyboard and USB mouse output from an ASCII string. This can be used
 launch applications using a button press or cap touch.
 
+![Launch Chrome to YouTube](./images/keymouse.gif)
+
 Example: The following string launches the Chrome browser to Google using
 Windows.
 
