@@ -25,6 +25,8 @@
 #ifndef _KEYMOUSE_PLAY_H_
 #define _KEYMOUSE_PLAY_H_
 
+#include <Keyboard.h>
+#include <Mouse.h>
 #include <keynames.h>
 
 class keymouse_play {

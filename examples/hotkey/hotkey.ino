@@ -2,12 +2,17 @@
 
 keymouse_play keyplay;
 
-char keysequence[] =
+#ifdef TEENSYDUINO
+char keysequence[] = \
   "MEDIA_PLAY ~100 MEDIA_MUTE ~100 MEDIA_MUTE ~100 " \
   "MEDIA_VOLUME_INC MEDIA_VOLUME_INC ~100 " \
   "MEDIA_VOLUME_DEC MEDIA_VOLUME_DEC ~100 MEDIA_STOP ~100 " \
   "CTRL-MOUSE_LEFT " \
   "ALT-F2 ~100 'chromium-browser' ~10 ENTER ~100 'https://www.google.com/' ENTER";
+#else
+char keysequence[] = "CTRL-MOUSE_LEFT " \
+  "ALT-F2 ~100 'chromium-browser' ~10 ENTER ~100 'https://www.google.com/' ENTER";
+#endif
 
 void setup()
 {
@@ -20,8 +25,8 @@ void setup()
   keyplay.print_key_find("KEYPAD_0");
   keyplay.print_key_find("KEYPAD_1");
 
-  keyplay.print_key_find("MODIFIERKEY_RIGHT_SHIFT");
-  keyplay.print_key_find("MODIFIERKEY_SHIFT");
+  keyplay.print_key_find("RIGHT_SHIFT");
+  keyplay.print_key_find("SHIFT");
 
   keyplay.print_key_find("KEY_I");
   keyplay.print_key_find("KEY_INSERT");

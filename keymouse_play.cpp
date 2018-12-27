@@ -23,8 +23,17 @@
 */
 
 #include <Arduino.h>
-#include "keynames.h"
 #include "keymouse_play.h"
+
+#define DEBUG_ON	0
+
+#if DEBUG_ON
+#define dbprint(...)	Serial.print(__VA_ARGS__)
+#define dbprintln(...)	Serial.println(__VA_ARGS__)
+#else
+#define dbprint(...)
+#define dbprintln(...)
+#endif
 
 #define WHITESPACE " \t\n\r\f"
 
@@ -74,11 +83,13 @@ int keymouse_play::print_key_find(const char *keyname)
 {
   KEY_NAME_NUM_t *key_elem;
   key_elem = key_find(keyname);
-  Serial.print(keyname);
-  Serial.print(' ');
+  dbprint(keyname);
+  dbprint(' ');
   if (key_elem) {
-    Serial.printf("= key_name %s key_num 0x%x\n",
-        key_elem->key_name, key_elem->key_num);
+	dbprint("= key_name ");
+	dbprint(key_elem->key_name);
+	dbprint(" key_num 0x");
+	dbprintln(key_elem->key_num, HEX);
 	if (memcmp("MOUSE_", keyname, 6) == 0) {
 		Mouse.press(key_elem->key_num);
 		Mouse.release(key_elem->key_num);
@@ -90,7 +101,7 @@ int keymouse_play::print_key_find(const char *keyname)
     return 1;
   }
   else {
-    Serial.println("not found");
+    dbprintln("not found");
     return 0;
   }
 }
@@ -100,9 +111,9 @@ int keymouse_play::keyseq_handle(char *token)
   if (token == NULL || *token == '\0') return 1;
 
   if (*token == '\'') {
-    Keyboard.write(token + 1, strlen(token)-2);
+    Keyboard.write((const uint8_t*)token + 1, strlen(token)-2);
     Serial.write(token + 1, strlen(token)-2);
-    Serial.println();
+    dbprintln();
   }
   else if (*token == '~') {
     keyseq_delay = millis() + 10*strtoul(token+1, NULL, 10);
@@ -112,11 +123,13 @@ int keymouse_play::keyseq_handle(char *token)
     key_elem = key_find(token+1);
     if (key_elem) {
       if (memcmp("MOUSE_", token+1, 6) == 0) {
-        Serial.printf("mouse press %s\n", token+1);
+        dbprint("mouse press ");
+		dbprintln(token+1);
         Mouse.press(key_elem->key_num);
       }
       else {
-        Serial.printf("key press %s\n", token+1);
+        dbprint("key press ");
+		dbprintln(token+1);
         Keyboard.press(key_elem->key_num);
       }
     }
@@ -126,11 +139,13 @@ int keymouse_play::keyseq_handle(char *token)
     key_elem = key_find(token+1);
     if (key_elem) {
       if (memcmp("MOUSE_", token+1, 6) == 0) {
-        Serial.printf("mouse release %s\n", token+1);
+        dbprint("mouse release ");
+		dbprintln(token+1);
         Mouse.release(key_elem->key_num);
       }
       else {
-        Serial.printf("key release %s\n", token+1);
+        dbprint("key release ");
+		dbprintln(token+1);
         Keyboard.release(key_elem->key_num);
       }
     }
@@ -138,35 +153,36 @@ int keymouse_play::keyseq_handle(char *token)
   else if (print_key_find(token)) {
   }
   else if (memcmp("ALT-", token, 4) == 0) {
-    Keyboard.press(MODIFIERKEY_ALT);
-    Serial.println("ALT pressed");
+    Keyboard.press(KEY_LEFT_ALT);
+    dbprintln("ALT pressed");
     print_key_find(token+4);
-    Keyboard.release(MODIFIERKEY_ALT);
-    Serial.println("ALT released");
+    Keyboard.release(KEY_LEFT_ALT);
+    dbprintln("ALT released");
   }
   else if (memcmp("CTRL-", token, 5) == 0) {
-    Keyboard.press(MODIFIERKEY_CTRL);
-    Serial.println("CTRL pressed");
+    Keyboard.press(KEY_LEFT_CTRL);
+    dbprintln("CTRL pressed");
     print_key_find(token+5);
-    Keyboard.release(MODIFIERKEY_CTRL);
-    Serial.println("CTRL released");
+    Keyboard.release(KEY_LEFT_CTRL);
+    dbprintln("CTRL released");
   }
   else if (memcmp("SHIFT-", token, 6) == 0) {
-    Keyboard.press(MODIFIERKEY_SHIFT);
-    Serial.println("SHIFT pressed");
+    Keyboard.press(KEY_LEFT_SHIFT);
+    dbprintln("SHIFT pressed");
     print_key_find(token+6);
-    Keyboard.release(MODIFIERKEY_SHIFT);
-    Serial.println("SHIFT released");
+    Keyboard.release(KEY_LEFT_SHIFT);
+    dbprintln("SHIFT released");
   }
   else if (memcmp("GUI-", token, 4) == 0) {
-    Keyboard.press(MODIFIERKEY_GUI);
-    Serial.println("GUI pressed");
+    Keyboard.press(KEY_LEFT_GUI);
+    dbprintln("GUI pressed");
     print_key_find(token+4);
-    Keyboard.release(MODIFIERKEY_GUI);
-    Serial.println("GUI released");
+    Keyboard.release(KEY_LEFT_GUI);
+    dbprintln("GUI released");
   }
   else {
-    Serial.printf("TBD: %s\n", token);
+    dbprint("TBD: ");
+	dbprintln(token);
   }
   return 0;
 }
