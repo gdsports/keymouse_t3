@@ -42,7 +42,7 @@ class keymouse_play {
     int keyseq_handle(char *token);
 
   private:
-    char keysequence[1024];
+    char *keysequence = NULL;
     uint32_t keyseq_delay = 0;
     bool keyseq_done = true;
 };

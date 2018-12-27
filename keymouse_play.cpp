@@ -40,8 +40,8 @@
 int keymouse_play::start(const char *keyseq)
 {
   if (!keyseq_done) return 0;
-  strncpy(keysequence, keyseq, sizeof(keysequence)-1);
-  keysequence[sizeof(keysequence)-1] = '\0';
+  keysequence = strdup(keyseq);
+  if (keysequence == NULL) return 0;
   char *tok = strtok(keysequence, WHITESPACE);
   return keyseq_done = keyseq_handle(tok);
 }
@@ -108,7 +108,12 @@ int keymouse_play::print_key_find(const char *keyname)
 
 int keymouse_play::keyseq_handle(char *token)
 {
-  if (token == NULL || *token == '\0') return 1;
+  if (token == NULL || *token == '\0') {
+	if (keysequence) free(keysequence);
+	Keyboard.releaseAll();
+	Mouse.release(MOUSE_ALL);
+	return 1;
+  }
 
   if (*token == '\'') {
     Keyboard.write((const uint8_t*)token + 1, strlen(token)-2);
