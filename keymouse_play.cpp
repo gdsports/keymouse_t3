@@ -79,6 +79,38 @@ KEY_NAME_NUM_t *keymouse_play::key_find(const char *keyname)
       sizeof(KEY_NAME_NUM[0]), compar);
 }
 
+// Handle compound keys such as CTRL-ALT-DELETE
+int keymouse_play::compound_key(const char *token)
+{
+  int cycles = 0;
+  const char *separator = token;
+
+  while ((separator = strchr(token, '-'))) {
+    if (memcmp("ALT-", token, 4) == 0) {
+      Keyboard.press(KEY_LEFT_ALT);
+      dbprintln("ALT pressed");
+    }
+    else if (memcmp("CTRL-", token, 5) == 0) {
+      Keyboard.press(KEY_LEFT_CTRL);
+      dbprintln("CTRL pressed");
+    }
+    else if (memcmp("SHIFT-", token, 6) == 0) {
+      Keyboard.press(KEY_LEFT_SHIFT);
+      dbprintln("SHIFT pressed");
+    }
+    else if (memcmp("GUI-", token, 4) == 0) {
+      Keyboard.press(KEY_LEFT_GUI);
+      dbprintln("GUI pressed");
+    }
+    token = separator + 1;
+    cycles++;
+  }
+  print_key_find(token);
+  Keyboard.releaseAll();
+  Mouse.release(MOUSE_ALL);
+  return cycles;
+}
+
 int keymouse_play::print_key_find(const char *keyname)
 {
   KEY_NAME_NUM_t *key_elem;
@@ -86,18 +118,18 @@ int keymouse_play::print_key_find(const char *keyname)
   dbprint(keyname);
   dbprint(' ');
   if (key_elem) {
-	dbprint("= key_name ");
-	dbprint(key_elem->key_name);
-	dbprint(" key_num 0x");
-	dbprintln(key_elem->key_num, HEX);
-	if (memcmp("MOUSE_", keyname, 6) == 0) {
-		Mouse.press(key_elem->key_num);
-		Mouse.release(key_elem->key_num);
-	}
-	else {
-		Keyboard.press(key_elem->key_num);
-		Keyboard.release(key_elem->key_num);
-	}
+    dbprint("= key_name ");
+    dbprint(key_elem->key_name);
+    dbprint(" key_num 0x");
+    dbprintln(key_elem->key_num, HEX);
+    if (memcmp("MOUSE_", keyname, 6) == 0) {
+      Mouse.press(key_elem->key_num);
+      Mouse.release(key_elem->key_num);
+    }
+    else {
+      Keyboard.press(key_elem->key_num);
+      Keyboard.release(key_elem->key_num);
+    }
     return 1;
   }
   else {
@@ -109,10 +141,10 @@ int keymouse_play::print_key_find(const char *keyname)
 int keymouse_play::keyseq_handle(char *token)
 {
   if (token == NULL || *token == '\0') {
-	if (keysequence) free(keysequence);
-	Keyboard.releaseAll();
-	Mouse.release(MOUSE_ALL);
-	return 1;
+    if (keysequence) free(keysequence);
+    Keyboard.releaseAll();
+    Mouse.release(MOUSE_ALL);
+    return 1;
   }
 
   if (*token == '\'') {
@@ -123,71 +155,43 @@ int keymouse_play::keyseq_handle(char *token)
   else if (*token == '~') {
     keyseq_delay = millis() + 10*strtoul(token+1, NULL, 10);
   }
-  else if (*token == '+') {
+  else if ((*token == '+') || (*token == '-')) {
     KEY_NAME_NUM_t *key_elem;
     key_elem = key_find(token+1);
     if (key_elem) {
       if (memcmp("MOUSE_", token+1, 6) == 0) {
-        dbprint("mouse press ");
-		dbprintln(token+1);
-        Mouse.press(key_elem->key_num);
+        if (*token == '+') {
+          dbprint("mouse press ");
+          dbprintln(token+1);
+          Mouse.press(key_elem->key_num);
+        }
+        else {
+          dbprint("mouse release ");
+          dbprintln(token+1);
+          Mouse.release(key_elem->key_num);
+        }
       }
       else {
-        dbprint("key press ");
-		dbprintln(token+1);
-        Keyboard.press(key_elem->key_num);
-      }
-    }
-  }
-  else if (*token == '-') {
-    KEY_NAME_NUM_t *key_elem;
-    key_elem = key_find(token+1);
-    if (key_elem) {
-      if (memcmp("MOUSE_", token+1, 6) == 0) {
-        dbprint("mouse release ");
-		dbprintln(token+1);
-        Mouse.release(key_elem->key_num);
-      }
-      else {
-        dbprint("key release ");
-		dbprintln(token+1);
-        Keyboard.release(key_elem->key_num);
+        if (*token == '+') {
+          dbprint("key press ");
+          dbprintln(token+1);
+          Keyboard.press(key_elem->key_num);
+        }
+        else {
+          dbprint("key release ");
+          dbprintln(token+1);
+          Keyboard.release(key_elem->key_num);
+        }
       }
     }
   }
   else if (print_key_find(token)) {
   }
-  else if (memcmp("ALT-", token, 4) == 0) {
-    Keyboard.press(KEY_LEFT_ALT);
-    dbprintln("ALT pressed");
-    print_key_find(token+4);
-    Keyboard.release(KEY_LEFT_ALT);
-    dbprintln("ALT released");
-  }
-  else if (memcmp("CTRL-", token, 5) == 0) {
-    Keyboard.press(KEY_LEFT_CTRL);
-    dbprintln("CTRL pressed");
-    print_key_find(token+5);
-    Keyboard.release(KEY_LEFT_CTRL);
-    dbprintln("CTRL released");
-  }
-  else if (memcmp("SHIFT-", token, 6) == 0) {
-    Keyboard.press(KEY_LEFT_SHIFT);
-    dbprintln("SHIFT pressed");
-    print_key_find(token+6);
-    Keyboard.release(KEY_LEFT_SHIFT);
-    dbprintln("SHIFT released");
-  }
-  else if (memcmp("GUI-", token, 4) == 0) {
-    Keyboard.press(KEY_LEFT_GUI);
-    dbprintln("GUI pressed");
-    print_key_find(token+4);
-    Keyboard.release(KEY_LEFT_GUI);
-    dbprintln("GUI released");
+  else if (compound_key(token)) {
   }
   else {
     dbprint("TBD: ");
-	dbprintln(token);
+    dbprintln(token);
   }
   return 0;
 }

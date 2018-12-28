@@ -40,6 +40,7 @@ class keymouse_play {
   private:
     static int compar(const void *pkey, const void *pelem);
     int keyseq_handle(char *token);
+    int compound_key(const char *token);
 
   private:
     char *keysequence = NULL;

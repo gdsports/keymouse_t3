@@ -44,12 +44,14 @@ find . -name '*.ino' -print0 | xargs -0 -n 1 $CC >/tmp/t36_$$.txt 2>&1
 arduino --install-boards "arduino:samd"
 BOARD="arduino:samd:mkrzero"
 CC="arduino --verify --board ${BOARD}"
-find . -name '*.ino' -print0 | xargs -0 -n 1 $CC >/tmp/zero_$$.txt 2>&1
+$CC hotkey/hotkey.ino >/tmp/zero_$$.txt 2>&1
+#find . -name '*.ino' -print0 | xargs -0 -n 1 $CC >/tmp/zero_$$.txt 2>&1
 arduino --pref "boardsmanager.additional.urls=https://adafruit.github.io/arduino-board-index/package_adafruit_index.json" --save-prefs
 arduino --install-boards "adafruit:samd"
 BOARD="adafruit:samd:adafruit_metro_m4"
 CC="arduino --verify --board ${BOARD}"
-find . -name '*.ino' -print0 | xargs -0 -n 1 $CC >/tmp/m4_$$.txt 2>&1
+$CC hotkey/hotkey.ino >/tmp/m4_$$.txt 2>&1
+#find . -name '*.ino' -print0 | xargs -0 -n 1 $CC >/tmp/m4_$$.txt 2>&1
 BOARD="adafruit:samd:adafruit_circuitplayground_m0"
 CC="arduino --verify --board ${BOARD}"
 find . -name '*.ino' -print0 | xargs -0 -n 1 $CC >/tmp/cpx_$$.txt 2>&1
