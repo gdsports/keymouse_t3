@@ -30,9 +30,11 @@
 #if DEBUG_ON
 #define dbprint(...)	Serial.print(__VA_ARGS__)
 #define dbprintln(...)	Serial.println(__VA_ARGS__)
+#define dbwrite(...)	Serial.write(__VA_ARGS__)
 #else
 #define dbprint(...)
 #define dbprintln(...)
+#define dbwrite(...)
 #endif
 
 #define WHITESPACE " \t\n\r\f"
@@ -46,10 +48,21 @@ int keymouse_play::start(const char *keyseq)
   return keyseq_done = keyseq_handle(tok);
 }
 
+uint32_t keymouse_play::elapsedmSecs(void)
+{
+  uint32_t now = millis();
+  if (now < keyseq_millis) {
+    return (now + 1) + (0xFFFFFFFF - keyseq_millis);
+  }
+  else {
+    return now - keyseq_millis;
+  }
+}
+
 int keymouse_play::loop(void)
 {
   if (keyseq_done) return 1;
-  if (keyseq_delay && (millis() < keyseq_delay)) {
+  if (keyseq_delay && (elapsedmSecs() < keyseq_delay)) {
     return 0;
   }
   keyseq_delay = 0;
@@ -149,11 +162,12 @@ int keymouse_play::keyseq_handle(char *token)
 
   if (*token == '\'') {
     Keyboard.write((const uint8_t*)token + 1, strlen(token)-2);
-    Serial.write(token + 1, strlen(token)-2);
+    dbwrite(token + 1, strlen(token)-2);
     dbprintln();
   }
   else if (*token == '~') {
-    keyseq_delay = millis() + 10*strtoul(token+1, NULL, 10);
+    keyseq_delay = 10*strtoul(token+1, NULL, 10);
+    keyseq_millis = millis();
   }
   else if ((*token == '+') || (*token == '-')) {
     KEY_NAME_NUM_t *key_elem;

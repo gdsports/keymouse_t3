@@ -41,10 +41,12 @@ class keymouse_play {
     static int compar(const void *pkey, const void *pelem);
     int keyseq_handle(char *token);
     int compound_key(const char *token);
+    uint32_t elapsedmSecs(void);
 
   private:
     char *keysequence = NULL;
     uint32_t keyseq_delay = 0;
+    uint32_t keyseq_millis = 0;
     bool keyseq_done = true;
 };
 
