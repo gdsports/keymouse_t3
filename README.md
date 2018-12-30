@@ -45,3 +45,23 @@ WARNING: Strings with embedded spaces are not currently supported. For example,
 the string 'chrome https://www.google.com/' does not work because it has an
 embedded space between 'chrome' and the URL. See the above example for how to
 handle this.
+
+## Examples
+
+### CircuitPlayground
+
+Demonstrate key macros triggered by CPX buttons and captouch. Turns a CPX into
+an application launcher. As long as the application can be launched from
+command line, there is no need to install software on the computer.
+
+* Pressing the left button opens Chrome to Google.
+* Pressing the right button opens Chrome to Youtube.
+* Touching captouch #3 (A4) opens Chrome to Adafruit.
+
+The only problem is the sketch must be recompiled and uploaded to change
+the keyboard macros. See the
+[XYmodem](https://github.com/gdsports/XYmodem/tree/master/examples/CircuitPlaygroundExpress)
+project for a version where the key macros can be uploaded using the YMODEM
+file transfer protocol. This allows users to change the macros without
+installing and using the Arduino IDE. The only program required is a terminal
+program such as TeraTerm or minicom.

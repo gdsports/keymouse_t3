@@ -1,12 +1,12 @@
 /*
- * Demonstrate keymacros triggered by CP buttons and captouch.
- * Turns a CP into an application launcher. As long as the application
+ * Demonstrate keymacros triggered by CPX buttons and captouch.
+ * Turns a CPX into an application launcher. As long as the application
  * can be launched from command line, there is no need to install software
  * on the computer.
  *
  * Pressing the left button opens Chrome to Google.
  * Pressing the right button opens Chrome to Youtube.
- * Touching captouch #3 (A4) opens Chrom to Adafruit.
+ * Touching captouch #3 (A4) opens Chrome to Adafruit.
  */
 
 #include <Adafruit_CircuitPlayground.h>

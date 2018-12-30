@@ -20,7 +20,7 @@ cd ${IDEDIR}
 which arduino
 # Configure board package
 BOARD="teensy:avr:teensy36"
-arduino --pref "compiler.warning_level=default" \
+arduino --pref "compiler.warning_level=none" \
         --pref "custom_usb=teensy36_serialhid" \
         --pref "custom_keys=teensy36_en-us" \
         --pref "custom_opt=teensy36_o2std" \
@@ -39,19 +39,17 @@ else
     git clone https://github.com/gdsports/keymouse_t3
 fi
 cd keymouse_t3/examples
-find . -name '*.ino' -print0 | xargs -0 -n 1 $CC >/tmp/t36_$$.txt 2>&1
+find . -name '*.ino' -print0 | grep -zv Circuit | xargs -0 -n 1 $CC >/tmp/t36_$$.txt 2>&1
 #
 arduino --install-boards "arduino:samd"
 BOARD="arduino:samd:mkrzero"
 CC="arduino --verify --board ${BOARD}"
-$CC hotkey/hotkey.ino >/tmp/zero_$$.txt 2>&1
-#find . -name '*.ino' -print0 | xargs -0 -n 1 $CC >/tmp/zero_$$.txt 2>&1
+find . -name '*.ino' -print0 | grep -zv Circuit | xargs -0 -n 1 $CC >/tmp/zero_$$.txt 2>&1
 arduino --pref "boardsmanager.additional.urls=https://adafruit.github.io/arduino-board-index/package_adafruit_index.json" --save-prefs
 arduino --install-boards "adafruit:samd"
 BOARD="adafruit:samd:adafruit_metro_m4"
 CC="arduino --verify --board ${BOARD}"
-$CC hotkey/hotkey.ino >/tmp/m4_$$.txt 2>&1
-#find . -name '*.ino' -print0 | xargs -0 -n 1 $CC >/tmp/m4_$$.txt 2>&1
+find . -name '*.ino' -print0 | grep -zv Circuit | xargs -0 -n 1 $CC >/tmp/m4_$$.txt 2>&1
 BOARD="adafruit:samd:adafruit_circuitplayground_m0"
 CC="arduino --verify --board ${BOARD}"
 find . -name '*.ino' -print0 | xargs -0 -n 1 $CC >/tmp/cpx_$$.txt 2>&1
